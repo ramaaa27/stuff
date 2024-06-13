@@ -1,0 +1,60 @@
+{
+  "stuff": [
+    {
+      "id": "6c49",
+      "name": "Table",
+      "price": "50",
+      "category": "furniture"
+    },
+    {
+      "id": "bb5c",
+      "name": "Chair",
+      "price": "25",
+      "category": "furniture"
+    },
+    {
+      "id": "4f98",
+      "name": "Vas",
+      "price": "10",
+      "category": "furniture"
+    },
+    {
+      "id": "b93e",
+      "name": "Computer",
+      "price": "1200",
+      "category": "electronic"
+    },
+    {
+      "id": "2aa5",
+      "name": "Television",
+      "price": "1000",
+      "category": "electronic"
+    },
+    {
+      "id": "29bd",
+      "name": "Smartphone",
+      "price": "2000",
+      "category": "electronic"
+    },
+    {
+      "id": "cb9c",
+      "name": "Smashed Chicken",
+      "price": "2",
+      "category": "Food and Drink"
+    }
+  ],
+  "category": [
+    {
+      "id": "29bd",
+      "name": "Food and Drink"
+    },
+    {
+      "id": "45db",
+      "name": "furniture"
+    },
+    {
+      "id": "4110",
+      "name": "electronic"
+    }
+  ]
+}

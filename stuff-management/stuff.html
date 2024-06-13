@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar (sit on top) -->
+     <nav class="">
+        <div class="w3-bar w3-white w3-padding w3-card" style="letter-spacing:4px;">
+            <a href="#home" class="w3-bar-item w3-button">Toserba</a>
+            <!-- Right-sided navbar links. Hide them on small screens -->
+            <div class="w3-right w3-hide-small">
+                <a href="../stuff-management/stuff.html" class="w3-bar-item w3-button">Stuff</a>
+                <a href="../stuff-management/category.html" class="w3-bar-item w3-button">Category</a>
+            </div>
+        </div>
+    </nav>
+    
+    <br>
+    <div class="top">
+        <input type="text" placeholder="Name of stuff" id="name">
+        <input type="number" placeholder="Price of stuff" id="price">
+        <select id="category">
+            <option value="furniture">Furniture</option>
+            <option value="electronic">Electronic</option>
+        </select>
+        <button type="button" id="trigger" onclick="SaveStuff()">Save</button>
+    </div>
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="result">
+            <tr class="active-row">
+                <td colspan="5" align="center">Loading...</td>
+            </tr>
+        </tbody>
+    </table>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        const UpdateStuff = async(id) => {
+            const nameVal = document.getElementById('name').value;
+            const priceVal = document.getElementById('price').value;
+            const categoryVal = document.getElementById('category').value
+            await axios.patch(`http://localhost:3000/stuff/${id}`,{
+                name: nameVal,
+                price: priceVal,
+                category: categoryVal
+            })
+            .then((response)=>{
+                console.log(response);
+                document.getElementById('name').value = '';
+                document.getElementById('price').value = '';
+                document.getElementById('trigger').innerText = 'Save';
+                document.getElementById('trigger').setAttribute('onclick',`SaveStuff()`);
+                alert('Updated')
+                GetStuff();
+            })
+            .catch((error)=>{
+                alert('Server Off');
+            })
+        }
+        
+        const EditStuff = async(id) => {
+            await axios.get(`http://localhost:3000/stuff/${id}`)
+            .then((response)=>{
+                console.log(response.data);
+                const stuff = response.data;
+                document.getElementById('name').value = stuff.name;
+                document.getElementById('price').value = stuff.price;
+                document.getElementById('category').value = stuff.category;
+                document.getElementById('trigger').innerText = 'Update';
+                document.getElementById('trigger').setAttribute('onclick',`UpdateStuff('${id}')`);
+            })
+            .catch((error)=>{
+                console.log(error);
+            });
+        }
+
+        const DeleteStuff = async(id) => {
+            const confirmed = confirm('Apakah ini akan dihapus?');
+            if(confirmed){
+                await axios.delete(`http://localhost:3000/stuff/${id}`)
+            .then((response)=>{
+                console.log(response);
+                GetStuff();
+            })
+            .catch((error)=>{
+                console.log(error);
+            })
+            }
+        }
+
+        const GetStuff = async() => {
+            await axios.get('http://localhost:3000/stuff')
+            .then((response)=>{
+                console.log(response);
+                const stuffs = response.data;
+                let bucket = ""
+                stuffs.forEach((stuff, index) => {
+                    bucket += `
+                    <tr>
+                        <td>${index+1}</td>
+                        <td>${stuff.name}</td>
+                        <td>${stuff.category}</td>
+                        <td>$${stuff.price}</td>
+                        <td>
+                            <button onclick="EditStuff('${stuff.id}')" type="button">Edit</button>
+                            <button onclick="DeleteStuff('${stuff.id}')" type="button">Delete</button>
+                        </td>
+                    </tr>
+                    `
+                });
+                document.getElementById('result').innerHTML = bucket;
+            })
+            .catch((error)=>{
+                alert('Server Off');
+            })
+        }
+        GetStuff();
+        const SaveStuff = async() => {
+            const nameVal = document.getElementById('name').value;
+            const priceVal = document.getElementById('price').value;
+            const categoryVal = document.getElementById('category').value
+            
+            await axios.post('http://localhost:3000/stuff',{
+                name: nameVal,
+                price: priceVal,
+                category: categoryVal
+            })
+            .then((response)=>{
+                console.log(response);
+                alert('Saved')
+                GetStuff();
+            })
+            .catch((error)=>{
+                alert('Server Off');
+            })
+        }
+
+        const GetCategory = async() => {
+            await axios.get('http://localhost:3000/category')
+            .then((response)=>{
+                console.log(response);
+                const categories = response.data;
+                let bucket = ""
+                categories.forEach((category, index) => {
+                    bucket += `<option value="${category.name}">${category.name}</option>`
+                });
+                document.getElementById('category').innerHTML = bucket;
+            })
+            .catch((error)=>{
+                alert('Server Off');
+            })
+        }
+        GetCategory();
+    </script>
+</body>
+</html>
